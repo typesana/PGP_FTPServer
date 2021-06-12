@@ -1,2 +1,2 @@
 # GPG_FTPServer
-FTP Server & Clients with PGP
+FTP Server & Clients with PGP.
