@@ -1,3 +1,0 @@
-pyftpdlib==1.5.6
-pyOpenSSL==20.0.1
-python-gnupg==0.4.7
