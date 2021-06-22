@@ -36,7 +36,7 @@ def GPG_GenKey(headpath, name_email, passpharse, pubkOutPath):
         f.write(public_key)
 
 
-def GPG_Encrypt(gnupghome, plaintext_path, recipient, recipient_pk, enctext_path):
+def GPG_Encrypt(gnupghome, plaintext_path, recipient, recipient_pk, enctext_path, passphrase):
     # Init GnuPG Home Path
     gpg = gnupg.GPG(gnupghome=gnupghome)
 
@@ -50,7 +50,7 @@ def GPG_Encrypt(gnupghome, plaintext_path, recipient, recipient_pk, enctext_path
 
     # Encrypt the data
     fd = open(plaintext_path, 'rb')
-    encrypted_data = gpg.encrypt_file(fd, recipients=[recipient], sign=fp, passphrase='123', output=enctext_path)
+    encrypted_data = gpg.encrypt_file(fd, recipients=[recipient], sign=fp, passphrase=passphrase, output=enctext_path)
     # print(encrypted_data.ok)
     # print(encrypted_data.stderr)
 

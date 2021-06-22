@@ -25,16 +25,19 @@ class ftp_server:
        self.authorizer = DummyAuthorizer()
        self.authorizer.add_user('admin', 'password', './ftproot/', perm='elradfmwM')
        self.add_user_from_file('./ftpsec/userInfo')
-       print(self.authorizer.user_table)
+       # print(self.authorizer.user_table)
 
    def run(self, ip, port):
        self.handler = TLS_FTPHandler
        self.handler.authorizer = self.authorizer
-       # logging.basicConfig(filename='./ftpsec/pyftpd.log', level=logging.INFO)
+       logging.basicConfig(filename='./ftpsec/pyftpd.log',
+                           level=logging.INFO,
+                           format="%(asctime)s - %(levelname)-8s - %(name)s.%(funcName)s - %(message)s")
        self.handler.certfile = './ftpsec/keycertFTP.pem'
        self.handler.tls_data_required = True
        self.address = (ip, port)
        self.server = ThreadedFTPServer(self.address, self.handler)
+       print("Service Start On: ", ip, ":", port)
        self.server.serve_forever()
 
 

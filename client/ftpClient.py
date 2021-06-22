@@ -1,6 +1,6 @@
 # coding:utf-8
 from ftplib import FTP, FTP_TLS
-import sys
+import ssl
 from pgp import GPG_GenKey, GPG_Decrypt, GPG_Encrypt
 
 class FTPClient():
@@ -59,7 +59,7 @@ class FTPClient():
         return False
 
     # Encrypted File & Upload to the destination
-    def PGP_FTP_sendFile(self, filePath, pubkPath, recipient):
+    def PGP_FTP_sendFile(self, filePath, pubkPath, recipient, passphrase):
         # Step1: Get Public Key
         file_handle = open(pubkPath, 'wb')
         RecipentPK = recipient + '_pub_key.asc'
@@ -69,13 +69,13 @@ class FTPClient():
         # Step2: Encrypt
         GPG_Encrypt(gnupghome='./'+self.username+'/.gnupg', plaintext_path=filePath,
                     recipient=recipient, recipient_pk=pubkPath,
-                    enctext_path=filePath+'.encrypted'
+                    enctext_path=filePath+'.'+self.username, passphrase=passphrase
                     )
 
         # Step3: Upload Encrypted File
-        encPath = filePath+'.encrypted'
+        encPath = filePath+'.'+self.username
         filename = encPath.split('/')[-1]
-        file_handle = open(filePath+'.encrypted', 'rb')
+        file_handle = open(filePath+'.'+self.username, 'rb')
         res = self.ftp.storbinary("STOR ./" + recipient + '/' + filename, file_handle, 1024)
         if res.find('226') != -1:
             file_handle.close()
@@ -99,9 +99,10 @@ class FTPClient():
         file_handle.close()
 
         # Step3: Decrypt
-        GPG_Decrypt(gnupghome='./' + self.username + '/.gnupg', enctext_path=encPath,
+        return GPG_Decrypt(gnupghome='./' + self.username + '/.gnupg', enctext_path=encPath,
                     passphrase=passphrase, sender_pk=pubkPath,
                     dectext_path=encPath+'.decrypted')
+
 
 
 def test():
@@ -184,7 +185,4 @@ def UnitTest_Decrypt(ip, port):
                                    filename='client.py.encrypted', passphrase='123')
 
 if __name__ == "__main__":
-    UnitTest_admin_login(sys.argv[1], int(sys.argv[2]))
-    #UnitTest_UploadPK("192.168.142.99", 2121)
-    #UnitTest_Encrypt("192.168.142.99", 2121)
-    #UnitTest_Decrypt("192.168.142.99", 2121)
+    print(UnitTest_getDir())
