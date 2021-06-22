@@ -32,3 +32,9 @@ FTP Server & Clients with PGP. (Python 3)
     python3 ftpClient.py
     ```
     You should adjust some args if you want to use Unit Test.
+    
+## GUI
+You can use GUI by run
+```
+python3 ftpClientGUI.py
+```
